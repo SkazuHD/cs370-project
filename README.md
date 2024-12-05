@@ -1,4 +1,4 @@
-CS370 Project
+CS370 Project!
 
 <div align="center">
   <h1>👷 LLM Engineer's Handbook</h1>
