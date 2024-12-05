@@ -34,7 +34,7 @@ services:
     restart: always
 
   app:
-    build: ./app
+    build: ./
     container_name: "llm_engineering_app"
     ports:
       - 5000:5000

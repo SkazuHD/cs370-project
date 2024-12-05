@@ -49,15 +49,7 @@ class GithubCrawler(BaseCrawler):
                     with open(os.path.join(root, file), "r", errors="ignore") as f:  # noqa: PTH123, PTH118
                         tree[file_path] = f.read().replace(" ", "")
 
-            user = kwargs["user"]
-            instance = self.model(
-                content=tree,
-                name=repo_name,
-                link=link,
-                platform="github",
-                author_id=user.id,
-                author_full_name=user.full_name,
-            )
+            instance = self.model(content=tree, name=repo_name, link=link, platform="github")
             instance.save()
 
         except Exception:
