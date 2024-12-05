@@ -1,0 +1,14 @@
+settings:
+  docker:
+    parent_image: 992382797823.dkr.ecr.eu-central-1.amazonaws.com/zenml-rlwlcs:latest
+    skip_build: True
+  orchestrator.sagemaker:
+    synchronous: false
+    
+parameters:
+  user_full_name: CS370 Project
+  links:
+    - https://github.com/ros-infrastructure/www.ros.org/
+    - https://github.com/ros-navigation/docs.nav2.org
+    - https://github.com/moveit/moveit2
+    - https://github.com/gazebosim/gz-sim

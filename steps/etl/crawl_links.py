@@ -10,7 +10,7 @@ from llm_engineering.application.crawlers.dispatcher import CrawlerDispatcher
 
 @step
 def crawl_links(links: list[str]) -> Annotated[list[str], "crawled_links"]:
-    dispatcher = CrawlerDispatcher.build().register_linkedin().register_medium().register_github()
+    dispatcher = CrawlerDispatcher.build().register_github()
 
     logger.info(f"Starting to crawl {len(links)} link(s).")
 
@@ -39,7 +39,7 @@ def _crawl_link(dispatcher: CrawlerDispatcher, link: str) -> tuple[bool, str]:
 
         return (True, crawler_domain)
     except Exception as e:
-        logger.error(f"An error occurred while crowling: {e!s}")
+        logger.error(f"An error occurred while crawling: {e!s}")
 
         return (False, crawler_domain)
 
