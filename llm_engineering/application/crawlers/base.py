@@ -2,7 +2,6 @@ import time
 from abc import ABC, abstractmethod
 from tempfile import mkdtemp
 
-import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -11,7 +10,6 @@ from llm_engineering.domain.documents import NoSQLBaseDocument
 # Check if the current version of chromedriver exists
 # and if it doesn't exist, download it automatically,
 # then add chromedriver to path
-chromedriver_autoinstaller.install()
 
 
 class BaseCrawler(ABC):
@@ -34,7 +32,6 @@ class BaseSeleniumCrawler(BaseCrawler, ABC):
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-background-networking")
         options.add_argument("--ignore-certificate-errors")
-        options.add_argument(f"--user-data-dir={mkdtemp()}")
         options.add_argument(f"--data-path={mkdtemp()}")
         options.add_argument(f"--disk-cache-dir={mkdtemp()}")
         options.add_argument("--remote-debugging-port=9226")
