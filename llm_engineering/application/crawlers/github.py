@@ -1,4 +1,5 @@
 import os
+import pathlib
 import shutil
 import subprocess
 import tempfile
@@ -15,6 +16,41 @@ class GithubCrawler(BaseCrawler):
 
     def __init__(
         self,
+        include=(
+            ".txt",
+            ".md",
+            ".rst",
+            ".json",
+            ".yml",
+            ".yaml",
+            ".xml",
+            ".html",
+            ".csv",
+            ".py",
+            ".sh",
+            ".cfg",
+            ".conf",
+            ".js",
+            ".css",
+            ".scss",
+            ".cpp",
+            ".hpp",
+            ".h",
+            ".cc",
+            ".hh",
+            ".cmake",
+            ".bat",
+            ".rb",
+            ".bash",
+            ".qml",
+            ".proto",
+            ".properties",
+            ".template",
+            ".in",
+            ".inc",
+            ".pyi",
+            ".typed",
+        ),
         ignore=(
             ".git",
             ".toml",
@@ -29,10 +65,18 @@ class GithubCrawler(BaseCrawler):
             ".gif",
             ".stl",
             ".dae",
+            ".jar",
+            ".zip",
+            ".inc",
+            ".in",
+            ".gz",
+            ".blend",
+            ".obj",
         ),
     ) -> None:
         super().__init__()
         self._ignore = ignore
+        self._include = include
 
     def extract(self, link: str, **kwargs) -> None:
         old_model = self.model.find(link=link)
@@ -46,7 +90,7 @@ class GithubCrawler(BaseCrawler):
         repo_name = link.rstrip("/").split("/")[-1]
 
         local_temp = tempfile.mkdtemp()
-
+        file_types = {}
         try:
             os.chdir(local_temp)
             subprocess.run(["git", "clone", link], check=True)
@@ -61,16 +105,18 @@ class GithubCrawler(BaseCrawler):
                 dir = root.replace(repo_path, "").lstrip("/")
                 if dir.startswith(tuple(self._ignore)):
                     continue
-
                 for file in files:
                     if file.endswith(tuple(self._ignore)) or file.startswith("."):
                         continue
-
+                    if not file.endswith(tuple(self._include)):
+                        continue
                     file_path = os.path.join(dir, file)  # noqa: PTH118
                     full_file_path = os.path.join(root, file)  # noqa: PTH118
 
                     try:
                         with open(full_file_path, "r", errors="ignore") as f:  # noqa: PTH123
+                            file_extension = pathlib.Path(full_file_path).suffix
+                            file_types[file_extension] = 1
                             content = f.read().replace(" ", "")
                         file_size = len(content.encode("utf-8"))
 
@@ -99,6 +145,7 @@ class GithubCrawler(BaseCrawler):
             shutil.rmtree(local_temp, ignore_errors=True)
 
         logger.info(f"Finished scrapping GitHub repository: {link}")
+        logger.info(file_types)
 
     def save_tree(self, tree, repo_name, link):
         """Helper method to save the current tree."""
