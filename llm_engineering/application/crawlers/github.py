@@ -29,6 +29,8 @@ class GithubCrawler(BaseCrawler):
             ".gif",
             ".stl",
             ".dae",
+            ".jar",
+            ".pdf",
         ),
     ) -> None:
         super().__init__()
@@ -108,7 +110,7 @@ class GithubCrawler(BaseCrawler):
                 name=repo_name,
                 link=link,
                 platform="github",
-                author_id="fa862dce-f698-45cf-844b-d4df8df84701",
+                author_id="ea37b9b7-3f6d-4d77-8278-4e8c5c4738ea",
                 author_full_name="CS370 Project",
             )
             instance.save()
