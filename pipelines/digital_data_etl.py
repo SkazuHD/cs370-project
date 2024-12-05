@@ -1,11 +1,20 @@
 from zenml import pipeline
 
-from steps.etl import crawl_links, get_or_create_user
+from steps.etl import crawl_links
 
 
 @pipeline
-def digital_data_etl(user_full_name: str, links: list[str]) -> str:
-    user = get_or_create_user(user_full_name)
-    last_step = crawl_links(user=user, links=links)
+def digital_data_etl(links: list[str]) -> str:
+    last_step = crawl_links(links=links)
 
     return last_step.invocation_id
+
+
+digital_data_etl(
+    [
+        "https://github.com/ros-infrastructure/www.ros.org/",
+        "https://github.com/ros-navigation/docs.nav2.org",
+        "https://github.com/moveit/moveit2",
+        "https://github.com/gazebosim/gz-sim",
+    ]
+)
