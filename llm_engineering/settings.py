@@ -13,19 +13,21 @@ class Settings(BaseSettings):
     OPENAI_MODEL_ID: str = "gpt-4o-mini"
     OPENAI_API_KEY: str | None = None
 
+    LLAMA_MODEL_ID: str = "llama3.1"
+
     # Huggingface API
     HUGGINGFACE_ACCESS_TOKEN: str | None = None
 
     # Comet ML (during training)
     COMET_API_KEY: str | None = None
-    COMET_PROJECT: str = "twin"
+    COMET_PROJECT: str = "cs370"
 
     # --- Required settings when deploying the code. ---
     # --- Otherwise, default values values work fine. ---
 
     # MongoDB database
     DATABASE_HOST: str = "mongodb://llm_engineering:llm_engineering@127.0.0.1:27017"
-    DATABASE_NAME: str = "twin"
+    DATABASE_NAME: str = "cs370"
 
     # Qdrant vector database
     USE_QDRANT_CLOUD: bool = False

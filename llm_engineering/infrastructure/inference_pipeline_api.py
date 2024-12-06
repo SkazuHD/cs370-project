@@ -1,5 +1,6 @@
 import opik
 from fastapi import FastAPI, HTTPException
+from loguru import logger
 from opik import opik_context
 from pydantic import BaseModel
 
@@ -8,7 +9,7 @@ from llm_engineering.application.rag.retriever import ContextRetriever
 from llm_engineering.application.utils import misc
 from llm_engineering.domain.embedded_chunks import EmbeddedChunk
 from llm_engineering.infrastructure.opik_utils import configure_opik
-from llm_engineering.model.inference import InferenceExecutor, LLMInferenceSagemakerEndpoint
+from llm_engineering.model.inference import InferenceExecutor, LLMInferenceOLLAMA
 
 configure_opik()
 
@@ -24,12 +25,13 @@ class QueryResponse(BaseModel):
 
 
 @opik.track
-def call_llm_service(query: str, context: str | None) -> str:
-    llm = LLMInferenceSagemakerEndpoint(
-        endpoint_name=settings.SAGEMAKER_ENDPOINT_INFERENCE, inference_component_name=None
-    )
-    answer = InferenceExecutor(llm, query, context).execute()
-
+def call_llm_service(query: str) -> str:
+    # llm = LLMInferenceSagemakerEndpoint(
+    #    endpoint_name=settings.SAGEMAKER_ENDPOINT_INFERENCE, inference_component_name=None
+    # )
+    llm = LLMInferenceOLLAMA(model_name=settings.LLAMA_MODEL_ID)
+    answer = InferenceExecutor(llm, query).execute()
+    logger.info(answer)
     return answer
 
 
@@ -39,7 +41,7 @@ def rag(query: str) -> str:
     documents = retriever.search(query, k=3)
     context = EmbeddedChunk.to_context(documents)
 
-    answer = call_llm_service(query, context)
+    answer = call_llm_service(query)
 
     opik_context.update_current_trace(
         tags=["rag"],

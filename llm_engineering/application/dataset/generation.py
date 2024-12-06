@@ -112,7 +112,7 @@ Provide your response in JSON format.
         if mock:
             llm = FakeListLLM(responses=[constants.get_mocked_response(cls.dataset_type)])
         else:
-            llm = llm = ChatOllama(
+            llm = ChatOllama(
                 model=settings.LLAMA_MODEL_ID,
                 max_tokens=2000 if cls.dataset_type == DatasetType.PREFERENCE else 1200,
                 temperature=0.7,
