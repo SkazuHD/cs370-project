@@ -1,64 +1,36 @@
 import gradio as gr
-import requests
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import pipeline
 
-# Load the Hugging Face model
-MODEL_NAME = "TommyGammer/CS370_RAG/cs370-project"
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
+# Load your fine-tuned model (update this based on your model location)
+rag_model = pipeline("text-generation", model="")
 
-# Define the Qdrant API endpoint
-QDRANT_URL = "http://localhost:6333"
-QDRANT_COLLECTION = "rag_vectors"
-
-# Predefined questions
-PREDEFINED_QUESTIONS = [
-    "Tell me how can I navigate to a specific pose - include replanning aspects in your answer.",
-    "Can you provide me with code for this task?",
+# Predefined questions for the dropdown menu
+predefined_questions = [
+    "How can I navigate to a specific pose?",
+    "What are the best practices for navigation in ROS2?",
+    "Can you provide me with code for motion planning?",
+    "What is Gazebo simulation?",
 ]
 
 
-# Function to retrieve relevant context from Qdrant
-def retrieve_context(query):
-    payload = {
-        "collection_name": QDRANT_COLLECTION,
-        "search_params": {
-            "query_vector": tokenizer.encode(query, return_tensors="pt").tolist()[0],
-            "top": 5,  # Number of top results to retrieve
-        },
-    }
-    response = requests.post(f"{QDRANT_URL}/collections/{QDRANT_COLLECTION}/points/search", json=payload)
-    if response.status_code == 200:
-        results = response.json().get("result", [])
-        context = " ".join([result["payload"]["text"] for result in results])
-        return context
-    else:
-        return "No context retrieved. Ensure Qdrant is running and the collection is populated."
+# Function to generate an answer from the model
+def answer_query(query):
+    return rag_model(query)[0]["generated_text"]
 
 
-# Main function for the Gradio app
-def rag_response(question):
-    # Retrieve relevant context
-    context = retrieve_context(question)
-
-    # Generate response
-    inputs = tokenizer(f"Question: {question} Context: {context}", return_tensors="pt")
-    outputs = model.generate(**inputs)
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    return response
+# Function to handle question selection
+def select_query(query):
+    return answer_query(query)
 
 
-# Define the Gradio interface
-def main():
-    gr.Interface(
-        fn=rag_response,
-        inputs=gr.Dropdown(PREDEFINED_QUESTIONS, label="Select a Question"),
-        outputs=gr.Textbox(label="RAG System Response"),
-        title="RAG System for ROS2 Navigation Stack",
-        description="Interact with the RAG system to retrieve domain-specific answers and code snippets.",
-    ).launch()
+# Gradio Interface
+interface = gr.Interface(
+    fn=select_query,
+    inputs=gr.Dropdown(choices=predefined_questions, label="Select a Question"),
+    outputs=gr.Textbox(label="Answer"),
+    title="RAG System for ROS2 Robotics",
+    description="Ask specific questions related to ROS2 navigation, motion planning, and simulation.",
+)
 
-
-if __name__ == "__main__":
-    main()
+# Launch the interface
+interface.launch()
