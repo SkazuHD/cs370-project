@@ -118,7 +118,7 @@ class LLMInferenceOLLAMA(Inference):
         )
 
 
-    def set_payload(self, query: str, context: str, parameters: Optional[Dict[str, Any]] = None) -> None:
+    def set_payload(self, query: str, context: str | None, parameters: Optional[Dict[str, Any]] = None) -> None:
         """
         Sets the payload for the inference request.
 

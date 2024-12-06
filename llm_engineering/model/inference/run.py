@@ -22,7 +22,6 @@ class InferenceExecutor:
             query=self.query,
             context=self.context,
         )
-        print("Before infrence")
         answer = self.llm.inference()
-        print(answer)
+        print(type(answer))
         return answer

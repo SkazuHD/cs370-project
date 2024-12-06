@@ -66,12 +66,7 @@ class GithubCrawler(BaseCrawler):
             ".stl",
             ".dae",
             ".jar",
-            ".zip",
-            ".inc",
-            ".in",
-            ".gz",
-            ".blend",
-            ".obj",
+            ".pdf",
         ),
     ) -> None:
         super().__init__()

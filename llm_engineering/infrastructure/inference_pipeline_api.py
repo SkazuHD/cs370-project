@@ -25,12 +25,11 @@ class QueryResponse(BaseModel):
 
 
 @opik.track
-def call_llm_service(query: str, context: str | None) -> str:
+def call_llm_service(query: str, context: str | None = None) -> str:
 
     llm = LLMInferenceOLLAMA(model_name=settings.LLAMA_MODEL_ID)
     answer = InferenceExecutor(llm, query, context).execute()
 
-    logger.info(answer)
     return answer
 
 
@@ -42,18 +41,18 @@ def rag(query: str) -> str:
 
     answer = call_llm_service(query, context)
 
-    opik_context.update_current_trace(
-        tags=["rag"],
-        metadata={
-            "model_id": settings.HF_MODEL_ID,
-            "embedding_model_id": settings.TEXT_EMBEDDING_MODEL_ID,
-            "temperature": settings.TEMPERATURE_INFERENCE,
-            "query_tokens": misc.compute_num_tokens(query),
-            "context_tokens": misc.compute_num_tokens(context),
-            "answer_tokens": misc.compute_num_tokens(answer),
-        },
-    )
-
+    #opik_context.update_current_trace(
+    #    tags=["rag"],
+    #    metadata={
+    #        "model_id": settings.HF_MODEL_ID,
+    #        "embedding_model_id": settings.TEXT_EMBEDDING_MODEL_ID,
+    #        "temperature": settings.TEMPERATURE_INFERENCE,
+    #        "query_tokens": misc.compute_num_tokens(query),
+    #        "context_tokens": misc.compute_num_tokens(context),
+    #        "answer_tokens": misc.compute_num_tokens(answer),
+    #    },
+    #)
+#
     return answer
 
 

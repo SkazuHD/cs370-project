@@ -42,6 +42,6 @@ RUN poetry install --no-root --no-interaction --no-cache --without dev
 RUN poetry self add 'poethepoet[poetry_plugin]'
 RUN rm -rf ~/.cache/pypoetry/cache/
 RUN rm -rf ~/.cache/pypoetry/artifacts/
-RUN
-#Copy the rest of the code.
+
+# Copy the rest of the code.
 COPY . $WORKSPACE_ROOT
