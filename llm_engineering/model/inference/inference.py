@@ -8,6 +8,7 @@ try:
 except ModuleNotFoundError:
     logger.warning("Couldn't load AWS or SageMaker imports. Run 'poetry install --with aws' to support AWS.")
 
+from langchain_ollama import ChatOllama
 
 from llm_engineering.domain.inference import Inference
 from llm_engineering.settings import settings
@@ -79,6 +80,7 @@ class LLMInferenceSagemakerEndpoint(Inference):
 
         try:
             logger.info("Inference request sent.")
+
             invoke_args = {
                 "EndpointName": self.endpoint_name,
                 "ContentType": "application/json",
@@ -95,3 +97,46 @@ class LLMInferenceSagemakerEndpoint(Inference):
             logger.exception("SageMaker inference failed.")
 
             raise
+
+
+class LLMInferenceOLLAMA(Inference):
+    """
+    Class for performing inference using a SageMaker endpoint for LLM schemas.
+    """
+
+    def __init__(
+        self,
+        model_name: str,
+    ) -> None:
+        super().__init__()
+
+        self.payload = {}
+        self.llm = ChatOllama(
+            model=model_name,
+            temperature=0.7,
+        )
+
+    def set_payload(self, inputs: str, parameters: Optional[Dict[str, Any]] = None) -> None:
+        """
+        Sets the payload for the inference request.
+
+        Args:
+            inputs (str): The input text for the inference.
+            parameters (dict, optional): Additional parameters for the inference. Defaults to None.
+        """
+
+        self.payload["inputs"] = inputs
+        if parameters:
+            self.payload["parameters"].update(parameters)
+
+    def inference(self) -> Dict[str, Any]:
+        """
+        Performs the inference request using the SageMaker endpoint.
+
+        Returns:
+            dict: The response from the inference request.
+        Raises:
+            Exception: If an error occurs during the inference request.
+        """
+
+        return self.llm.invoke(self.payload)
