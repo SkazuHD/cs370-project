@@ -111,13 +111,14 @@ class LLMInferenceOLLAMA(Inference):
     ) -> None:
         super().__init__()
 
-        self.payload = {}
+        self.payload = []
         self.llm = ChatOllama(
             model=model_name,
             temperature=0.7,
         )
 
-    def set_payload(self, inputs: str, parameters: Optional[Dict[str, Any]] = None) -> None:
+
+    def set_payload(self, query: str, context: str, parameters: Optional[Dict[str, Any]] = None) -> None:
         """
         Sets the payload for the inference request.
 
@@ -125,10 +126,12 @@ class LLMInferenceOLLAMA(Inference):
             inputs (str): The input text for the inference.
             parameters (dict, optional): Additional parameters for the inference. Defaults to None.
         """
+        self.payload = [
+            ("system", "You are a helpful Assistant that answers questions of the user accurately given its knowledge and the provided context"),
+            ("user", f"Context:{context}, Question:{query}"),
+        ]
         return
-        self.payload["inputs"] = inputs
-        if parameters:
-            self.payload["parameters"].update(parameters)
+        
 
     def inference(self) -> Dict[str, Any]:
         """
@@ -139,8 +142,5 @@ class LLMInferenceOLLAMA(Inference):
         Raises:
             Exception: If an error occurs during the inference request.
         """
-        messages = [
-    ("system", "You are a helpful translator. Translate the user sentence to French."),
-    ("human", "I love programming."),
-]
-        return self.llm.invoke(messages)
+      
+        return self.llm.invoke(self.payload)
