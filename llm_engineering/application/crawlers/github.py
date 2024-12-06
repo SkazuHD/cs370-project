@@ -155,7 +155,7 @@ class GithubCrawler(BaseCrawler):
                 name=repo_name,
                 link=link,
                 platform="github",
-                author_id="fa862dce-f698-45cf-844b-d4df8df84701",
+                author_id="062465ad-c497-4a4e-b0a8-b67eca6a12e5",
                 author_full_name="CS370 Project",
             )
             instance.save()
