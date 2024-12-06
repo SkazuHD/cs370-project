@@ -1,12 +1,13 @@
 from loguru import logger
 from typing_extensions import Annotated
-from zenml import step
+from clearml import PipelineDecorator
 
 from llm_engineering.domain.dataset import InstructTrainTestSplit, PreferenceTrainTestSplit
 from llm_engineering.settings import settings
 
 
-@step
+@PipelineDecorator.component(name="push_to_huggingface")
+
 def push_to_huggingface(
     dataset: Annotated[InstructTrainTestSplit | PreferenceTrainTestSplit, "dataset_split"],
     dataset_id: Annotated[str, "dataset_id"],

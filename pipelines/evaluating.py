@@ -1,9 +1,8 @@
-from zenml import pipeline
-
+from clearml import PipelineDecorator
 from steps import evaluating as evaluating_steps
 
 
-@pipeline
+@PipelineDecorator.pipeline(name="evaluating", project="CS370")
 def evaluating(
     is_dummy: bool = False,
 ) -> None:

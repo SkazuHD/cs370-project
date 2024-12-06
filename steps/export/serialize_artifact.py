@@ -2,10 +2,9 @@ from typing import Any
 
 from pydantic import BaseModel
 from typing_extensions import Annotated
-from zenml import get_step_context, step
+from clearml import PipelineDecorator
 
-
-@step
+@PipelineDecorator.component(name="serialize Aritfact")
 def serialize_artifact(artifact: Any, artifact_name: str) -> Annotated[dict, "serialized_artifact"]:
     serialized_artifact = _serialize_artifact(artifact)
 
@@ -14,8 +13,8 @@ def serialize_artifact(artifact: Any, artifact_name: str) -> Annotated[dict, "se
     elif not isinstance(serialized_artifact, dict):
         serialized_artifact = {"artifact_data": serialized_artifact}
 
-    step_context = get_step_context()
-    step_context.add_output_metadata(output_name="serialized_artifact", metadata={"artifact_name": artifact_name})
+    #step_context = get_step_context()
+    #step_context.add_output_metadata(output_name="serialized_artifact", metadata={"artifact_name": artifact_name})
 
     return serialized_artifact
 

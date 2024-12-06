@@ -1,9 +1,9 @@
-from zenml import step
+from clearml import PipelineDecorator
 
 from llm_engineering.model.evaluation.sagemaker import run_evaluation_on_sagemaker
 
 
-@step
+@PipelineDecorator.component(name="evaluate")
 def evaluate(
     is_dummy: bool = False,
 ) -> None:

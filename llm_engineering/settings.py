@@ -1,7 +1,6 @@
 from loguru import logger
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from zenml.client import Client
-from zenml.exceptions import EntityExistsError
+
 
 
 class Settings(BaseSettings):
@@ -94,9 +93,9 @@ class Settings(BaseSettings):
 
         try:
             logger.info("Loading settings from the ZenML secret store.")
-
-            settings_secrets = Client().get_secret("settings")
-            settings = Settings(**settings_secrets.secret_values)
+            settings = Settings()
+            #settings_secrets = Client().get_secret("settings")
+            #settings = Settings(**settings_secrets.secret_values)
         except (RuntimeError, KeyError):
             logger.warning(
                 "Failed to load settings from the ZenML secret store. Defaulting to loading the settings from the '.env' file."
@@ -109,19 +108,20 @@ class Settings(BaseSettings):
         """
         Exports the settings to the ZenML secret store.
         """
+        pass
 
-        env_vars = settings.model_dump()
-        for key, value in env_vars.items():
-            env_vars[key] = str(value)
-
-        client = Client()
-
-        try:
-            client.create_secret(name="settings", values=env_vars)
-        except EntityExistsError:
-            logger.warning(
-                "Secret 'scope' already exists. Delete it manually by running 'zenml secret delete settings', before trying to recreate it."
-            )
+        #env_vars = settings.model_dump()
+        #for key, value in env_vars.items():
+        #    env_vars[key] = str(value)
+#
+        #client = Client()
+#
+        #try:
+        #    client.create_secret(name="settings", values=env_vars)
+        #except EntityExistsError:
+        #    logger.warning(
+        #        "Secret 'scope' already exists. Delete it manually by running 'zenml secret delete settings', before trying to recreate it."
+        #    )
 
 
 settings = Settings.load_settings()

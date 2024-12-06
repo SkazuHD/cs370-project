@@ -1,10 +1,15 @@
-from zenml import pipeline
+from clearml import Task, PipelineDecorator
 
 from steps.etl import crawl_links
 
 
-@pipeline
+
+
+@PipelineDecorator.pipeline(
+  name='digital_data_etl', project='CS370', version='0.1', 
+  args_map={'links':['str'], }
+)
 def digital_data_etl(links: list[str], *args, **kwargs) -> str:
     last_step = crawl_links(links=links)
 
-    return last_step.invocation_id
+    return last_step

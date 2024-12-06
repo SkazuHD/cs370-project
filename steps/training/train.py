@@ -1,9 +1,10 @@
-from zenml import step
+from clearml import PipelineDecorator
 
 from llm_engineering.model.finetuning.sagemaker import run_finetuning_on_sagemaker
 
 
-@step
+@PipelineDecorator.component(name="train")
+
 def train(
     finetuning_type: str,
     num_train_epochs: int,
