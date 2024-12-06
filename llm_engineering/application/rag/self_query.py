@@ -1,5 +1,5 @@
 import opik
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 from loguru import logger
 
 from llm_engineering.application import utils
@@ -18,7 +18,7 @@ class SelfQuery(RAGStep):
             return query
 
         prompt = SelfQueryTemplate().create_template()
-        model = ChatOpenAI(model=settings.OPENAI_MODEL_ID, api_key=settings.OPENAI_API_KEY, temperature=0)
+        model = ChatOllama(model=settings.LLAMA_MODEL_ID, temperature=0)
 
         chain = prompt | model
 

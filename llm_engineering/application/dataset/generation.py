@@ -5,7 +5,7 @@ from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models.fake import FakeListLLM
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 from loguru import logger
 
 from llm_engineering import domain
@@ -112,11 +112,8 @@ Provide your response in JSON format.
         if mock:
             llm = FakeListLLM(responses=[constants.get_mocked_response(cls.dataset_type)])
         else:
-            assert settings.OPENAI_API_KEY is not None, "OpenAI API key must be set to generate datasets"
-
-            llm = ChatOpenAI(
-                model=settings.OPENAI_MODEL_ID,
-                api_key=settings.OPENAI_API_KEY,
+            llm = llm = ChatOllama(
+                model=settings.LLAMA_MODEL_ID,
                 max_tokens=2000 if cls.dataset_type == DatasetType.PREFERENCE else 1200,
                 temperature=0.7,
             )
