@@ -3,7 +3,7 @@ import requests
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 # Load the Hugging Face model
-MODEL_NAME = "TommyGammer/CS370_RAG"
+MODEL_NAME = "TommyGammer/CS370_RAG/cs370-project"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
 
