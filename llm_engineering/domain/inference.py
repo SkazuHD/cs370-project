@@ -18,5 +18,9 @@ class Inference(ABC):
         pass
 
     @abstractmethod
+    def set_payload(self, query, context, parameters=None):
+        pass
+
+    @abstractmethod
     def inference(self):
         pass
