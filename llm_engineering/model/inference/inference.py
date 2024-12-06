@@ -63,10 +63,11 @@ class LLMInferenceSagemakerEndpoint(Inference):
             inputs (str): The input text for the inference.
             parameters (dict, optional): Additional parameters for the inference. Defaults to None.
         """
-
+        print("FYOU !")
         self.payload["inputs"] = inputs
         if parameters:
             self.payload["parameters"].update(parameters)
+        print("FYOU")
 
     def inference(self) -> Dict[str, Any]:
         """
@@ -124,7 +125,7 @@ class LLMInferenceOLLAMA(Inference):
             inputs (str): The input text for the inference.
             parameters (dict, optional): Additional parameters for the inference. Defaults to None.
         """
-
+        return
         self.payload["inputs"] = inputs
         if parameters:
             self.payload["parameters"].update(parameters)
@@ -138,5 +139,8 @@ class LLMInferenceOLLAMA(Inference):
         Raises:
             Exception: If an error occurs during the inference request.
         """
-
-        return self.llm.invoke(self.payload)
+        messages = [
+    ("system", "You are a helpful translator. Translate the user sentence to French."),
+    ("human", "I love programming."),
+]
+        return self.llm.invoke(messages)

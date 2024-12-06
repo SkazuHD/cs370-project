@@ -26,6 +26,7 @@ Context: {context}
             self.prompt = prompt
 
     def execute(self) -> str:
+        print("SETTING PAYLOAD", self.llm)
         self.llm.set_payload(
             inputs=self.prompt.format(query=self.query, context=self.context),
             parameters={
@@ -34,6 +35,7 @@ Context: {context}
                 "temperature": settings.TEMPERATURE_INFERENCE,
             },
         )
-        answer = self.llm.inference()[0]["generated_text"]
+        print("BEFORE INFER")
+        answer = self.llm.inference()
 
         return answer
