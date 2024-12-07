@@ -15,7 +15,7 @@ Thomas Gammer
 ## Docker Containers
 
 Here are the docker containers up and running.
-![Docker Containers](./screenshots/Capture.PNG)
+![Docker Containers](./screenshots/container.png)
 
 ## Crawled Resources
 
