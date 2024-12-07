@@ -9,7 +9,7 @@ class DeploymentStrategy(ABC):
 
 class Inference(ABC):
     """An abstract class for performing inference."""
-
+    
     def __init__(self):
         self.model = None
 

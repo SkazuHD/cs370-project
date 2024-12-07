@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from loguru import logger
 from opik import opik_context
 from pydantic import BaseModel
+from langchain.schema import AIMessage, HumanMessage, SystemMessage
 
 from llm_engineering import settings
 from llm_engineering.application.rag.retriever import ContextRetriever
@@ -25,7 +26,7 @@ class QueryResponse(BaseModel):
 
 
 @opik.track
-def call_llm_service(query: str, context: str | None = None) -> str:
+def call_llm_service(query: HumanMessage, history: list, context: str | None = None) -> str:
 
     llm = LLMInferenceOLLAMA(model_name=settings.LLAMA_MODEL_ID)
     answer = InferenceExecutor(llm, query, context).execute()
@@ -34,12 +35,16 @@ def call_llm_service(query: str, context: str | None = None) -> str:
 
 
 @opik.track
-def rag(query: str) -> str:
+def rag(query, history: list) -> str:
     retriever = ContextRetriever(mock=False)
-    documents = retriever.search(query, k=3)
+    if len(history) == 0:
+        content = query.content
+    else:
+        content = query.content + history[-1].content
+    documents = retriever.search(content, k=3)
     context = EmbeddedChunk.to_context(documents)
 
-    answer = call_llm_service(query, context)
+    answer = call_llm_service(query, history , context)
 
     #opik_context.update_current_trace(
     #    tags=["rag"],

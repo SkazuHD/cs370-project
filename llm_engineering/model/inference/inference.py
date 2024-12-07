@@ -2,6 +2,7 @@ import json
 from typing import Any, Dict, Optional
 
 from loguru import logger
+from threading import Lock
 
 try:
     import boto3
@@ -12,6 +13,8 @@ from langchain_ollama import ChatOllama
 
 from llm_engineering.domain.inference import Inference
 from llm_engineering.settings import settings
+from langchain.schema import AIMessage, HumanMessage, SystemMessage
+
 
 
 class LLMInferenceSagemakerEndpoint(Inference):
@@ -103,19 +106,32 @@ class LLMInferenceSagemakerEndpoint(Inference):
 class LLMInferenceOLLAMA(Inference):
     """
     Class for performing inference using a SageMaker endpoint for LLM schemas.
+    Implements Singleton design pattern.
     """
+    _instance = None
+    _lock = Lock()  # For thread safety
 
-    def __init__(
-        self,
-        model_name: str,
-    ) -> None:
-        super().__init__()
+    def __new__(cls, model_name: str):
+        # Ensure thread-safe singleton instance creation
+        if not cls._instance:
+            with cls._lock:
+                if not cls._instance:
+                    print("Creating new instance")
+                    cls._instance = super().__new__(cls)
+        else:
+            print("Using existing instance")
+        return cls._instance
 
-        self.payload = []
-        self.llm = ChatOllama(
-            model=model_name,
-            temperature=0.7,
-        )
+    def __init__(self, model_name: str) -> None:
+        # Only initialize once
+        if not hasattr(self, "_initialized"):
+            super().__init__()
+            self.payload = []
+            self.llm = ChatOllama(
+                model=model_name,
+                temperature=0.7,
+            )
+            self._initialized = True  # Flag to prevent reinitialization
 
 
     def set_payload(self, query: str, context: str | None, parameters: Optional[Dict[str, Any]] = None) -> None:
@@ -127,8 +143,9 @@ class LLMInferenceOLLAMA(Inference):
             parameters (dict, optional): Additional parameters for the inference. Defaults to None.
         """
         self.payload = [
-            ("system", "You are a helpful Assistant that answers questions of the user accurately given its knowledge and the provided context"),
-            ("user", f"Context:{context}, Question:{query}"),
+            SystemMessage(content='You are a helpful Assistant that answers questions of the user accurately given its knowledge and the provided context'),
+            SystemMessage(content=context),
+            query,
         ]
         return
         
@@ -142,5 +159,5 @@ class LLMInferenceOLLAMA(Inference):
         Raises:
             Exception: If an error occurs during the inference request.
         """
-      
+        print(self.payload)
         return self.llm.invoke(self.payload)
