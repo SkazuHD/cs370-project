@@ -12,9 +12,7 @@ predefined_questions = [
 # Function to handle input (dropdown or text query)
 def select_query(dropdown_query, text_query):
     if text_query:
-        ans = rag(text_query).content
-        print(ans)
-        return ans
+        return rag(text_query).content
     elif dropdown_query:
         return rag(dropdown_query).content
 
