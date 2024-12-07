@@ -4,8 +4,8 @@ In this project we build a Retrieval Augmented Generation (RAG) system. RAG is a
 
 ## Team Members
 
-Jonah-Alexander Loewnich
-Thomas Gammer
+- Jonah-Alexander Loewnich
+- Thomas Gammer
 
 ## Docker Containers
 
