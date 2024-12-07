@@ -1,4 +1,39 @@
-CS370 Project!
+# CS370 Project
+
+In this project we build a Retrieval Augmented Generation (RAG) system. RAG is a recent paradigm for large-scale language understanding tasks. It combines the strengths of retrieval-based and generation-based models, enabling the model to retrieve relevant information from a large corpus and generate a coherent domain-specific response
+
+## Team Members
+
+Jonah-Alexander Loewnich
+- Github:
+- HuggingFace:
+
+Thomas Gammer
+- Github:
+- HuggingFace:
+
+## Docker Containers
+
+Here are the docker containers up and running.
+![Docker Containers](./screenshots/Capture.PNG)
+
+## Crawled Resources
+
+- https://github.com/ros-infrastructure/www.ros.org/
+- https://github.com/ros-navigation/docs.nav2.org
+- https://github.com/moveit/moveit2
+- https://github.com/gazebosim/gz-sim
+
+## LLM + RAG Responses
+
+Here is our models response to the first question.
+![Question 1 Response](./screenshots/127.0.0.1_7860__1-1.png)
+
+
+Here is our models response to the second question.
+![Question 2 Response](./screenshots/127.0.0.1_7860__2-1.png)
+
+---
 
 <div align="center">
   <h1>👷 LLM Engineer's Handbook</h1>

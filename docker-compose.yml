@@ -37,16 +37,24 @@ services:
     build: ./
     container_name: "llm_engineering_app"
     ports:
-      - 5000:5000
+      - 7860:7860
     volumes:
       - ./app:/app
     environment:
       PYTHONUNBUFFERED: "1"
+      NVIDIA_VISIBLE_DEVICES: "all"
     networks:
       - local
     depends_on:
       - mongo
       - qdrant
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: ["gpu"]
+            device_ids: ["all"]
 
   clearml:
     image: allegroai/clearml:latest
