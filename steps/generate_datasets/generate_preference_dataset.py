@@ -1,7 +1,7 @@
 from typing import Any
 
 from typing_extensions import Annotated
-from zenml import ArtifactConfig, get_step_context, step
+from clearml import PipelineDecorator
 
 from llm_engineering.application.dataset import generation
 from llm_engineering.domain.dataset import DatasetType, PreferenceTrainTestSplit
@@ -9,25 +9,22 @@ from llm_engineering.domain.prompt import GenerateDatasetSamplesPrompt
 from llm_engineering.domain.types import DataCategory
 
 
-@step
+@PipelineDecorator.component(name="generate_preference_dataset")
 def generate_preference_dataset(
     prompts: Annotated[dict[DataCategory, list[GenerateDatasetSamplesPrompt]], "prompts"],
     test_split_size: Annotated[float, "test_split_size"],
     mock: Annotated[bool, "mock_generation"] = False,
 ) -> Annotated[
     PreferenceTrainTestSplit,
-    ArtifactConfig(
-        name="preference_datasets",
-        tags=["dataset", "preference", "cleaned"],
-    ),
+    None
 ]:
     dataset_generator = generation.get_dataset_generator(DatasetType.PREFERENCE)
     datasets = dataset_generator.generate(prompts, test_size=test_split_size, mock=mock)
 
-    step_context = get_step_context()
-    step_context.add_output_metadata(
-        output_name="preference_datasets", metadata=_get_metadata_preference_dataset(datasets)
-    )
+    #step_context = get_step_context()
+    #step_context.add_output_metadata(
+    #    output_name="preference_datasets", metadata=_get_metadata_preference_dataset(datasets)
+    #)
 
     return datasets
 

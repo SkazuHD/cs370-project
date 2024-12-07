@@ -1,5 +1,5 @@
 from typing_extensions import Annotated
-from zenml import get_step_context, step
+from clearml import PipelineDecorator
 
 from llm_engineering.application.dataset import generation
 from llm_engineering.domain.dataset import DatasetType
@@ -7,7 +7,7 @@ from llm_engineering.domain.prompt import GenerateDatasetSamplesPrompt
 from llm_engineering.domain.types import DataCategory
 
 
-@step
+@PipelineDecorator.component(name="create_prompts")
 def create_prompts(
     documents: Annotated[list, "queried_cleaned_documents"],
     dataset_type: Annotated[DatasetType, "dataset_type"],
@@ -15,8 +15,8 @@ def create_prompts(
     dataset_generator = generation.get_dataset_generator(dataset_type)
     grouped_prompts = dataset_generator.get_prompts(documents)
 
-    step_context = get_step_context()
-    step_context.add_output_metadata(output_name="prompts", metadata=_get_metadata(grouped_prompts))
+    #step_context = get_step_context()
+    #step_context.add_output_metadata(output_name="prompts", metadata=_get_metadata(grouped_prompts))
 
     return grouped_prompts
 

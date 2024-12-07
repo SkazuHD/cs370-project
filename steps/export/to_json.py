@@ -1,12 +1,11 @@
 from pathlib import Path
 
 from typing_extensions import Annotated
-from zenml import step
-
+from clearml import PipelineDecorator
 from llm_engineering.infrastructure.files_io import JsonFileManager
 
 
-@step
+@PipelineDecorator.component(name="to JSON")
 def to_json(
     data: Annotated[dict, "serialized_artifact"],
     to_file: Annotated[Path, "to_file"],

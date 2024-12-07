@@ -43,6 +43,7 @@ class ContextRetriever:
         logger.info(
             f"Successfully generated {len(n_generated_queries)} search queries.",
         )
+        logger.info(f"The generated queries are \n {n_generated_queries}")
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             search_tasks = [executor.submit(self._search, _query_model, k) for _query_model in n_generated_queries]
@@ -66,19 +67,19 @@ class ContextRetriever:
         def _search_data_category(
             data_category_odm: type[EmbeddedChunk], embedded_query: EmbeddedQuery
         ) -> list[EmbeddedChunk]:
-            if embedded_query.author_id:
-                query_filter = Filter(
-                    must=[
-                        FieldCondition(
-                            key="author_id",
-                            match=MatchValue(
-                                value=str(embedded_query.author_id),
-                            ),
-                        )
-                    ]
-                )
-            else:
-                query_filter = None
+            #if embedded_query.author_id:
+            #    query_filter = Filter(
+            #        must=[
+            #            FieldCondition(
+            #                key="author_id",
+            #                match=MatchValue(
+            #                    value=str(embedded_query.author_id),
+            #                ),
+            #            )
+            #        ]
+            #    )
+            #else:
+            query_filter = None
 
             return data_category_odm.search(
                 query_vector=embedded_query.embedding,
@@ -88,12 +89,12 @@ class ContextRetriever:
 
         embedded_query: EmbeddedQuery = EmbeddingDispatcher.dispatch(query)
 
-        post_chunks = _search_data_category(EmbeddedPostChunk, embedded_query)
-        articles_chunks = _search_data_category(EmbeddedArticleChunk, embedded_query)
+        #post_chunks = _search_data_category(EmbeddedPostChunk, embedded_query)
+        #articles_chunks = _search_data_category(EmbeddedArticleChunk, embedded_query)
         repositories_chunks = _search_data_category(EmbeddedRepositoryChunk, embedded_query)
-
-        retrieved_chunks = post_chunks + articles_chunks + repositories_chunks
-
+        
+        retrieved_chunks =  repositories_chunks #post_chunks + articles_chunks +
+        logger.info(f"Retrieved {len(retrieved_chunks)} chunks")
         return retrieved_chunks
 
     def rerank(self, query: str | Query, chunks: list[EmbeddedChunk], keep_top_k: int) -> list[EmbeddedChunk]:

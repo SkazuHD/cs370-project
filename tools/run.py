@@ -14,7 +14,16 @@ from pipelines import (
     generate_datasets,
     training,
 )
+from clearml import PipelineDecorator
 
+import yaml
+from pathlib import Path
+
+def parse_yaml_config(config_path):
+    """Parse YAML config file."""
+    with open(config_path, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
 
 @click.command(
     help="""
@@ -143,57 +152,70 @@ def main(
         "enable_cache": not no_cache,
     }
     root_dir = Path(__file__).resolve().parent.parent
+    PipelineDecorator.run_locally()
 
     if run_end_to_end_data:
         run_args_end_to_end = {}
         pipeline_args["config_path"] = root_dir / "configs" / "end_to_end_data.yaml"
         assert pipeline_args["config_path"].exists(), f"Config file not found: {pipeline_args['config_path']}"
         pipeline_args["run_name"] = f"end_to_end_data_run_{dt.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-        end_to_end_data.with_options(**pipeline_args)(**run_args_end_to_end)
+        run_args_end_to_end = parse_yaml_config(pipeline_args["config_path"])
+        end_to_end_data(**run_args_end_to_end.get("parameters"))
 
     if run_etl:
         run_args_etl = {}
         pipeline_args["config_path"] = root_dir / "configs" / etl_config_filename
         assert pipeline_args["config_path"].exists(), f"Config file not found: {pipeline_args['config_path']}"
         pipeline_args["run_name"] = f"digital_data_etl_run_{dt.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-        digital_data_etl.with_options(**pipeline_args)(**run_args_etl)
+        run_args_etl = parse_yaml_config(pipeline_args["config_path"])
+        digital_data_etl(**run_args_etl.get("parameters"))
+
 
     if run_export_artifact_to_json:
         run_args_etl = {}
         pipeline_args["config_path"] = root_dir / "configs" / "export_artifact_to_json.yaml"
         assert pipeline_args["config_path"].exists(), f"Config file not found: {pipeline_args['config_path']}"
         pipeline_args["run_name"] = f"export_artifact_to_json_run_{dt.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-        export_artifact_to_json.with_options(**pipeline_args)(**run_args_etl)
+        run_args_etl = parse_yaml_config(pipeline_args["config_path"])
+        export_artifact_to_json(**run_args_etl.get("parameters"))
 
     if run_feature_engineering:
         run_args_fe = {}
         pipeline_args["config_path"] = root_dir / "configs" / "feature_engineering.yaml"
         pipeline_args["run_name"] = f"feature_engineering_run_{dt.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-        feature_engineering.with_options(**pipeline_args)(**run_args_fe)
+        run_args_fe = parse_yaml_config(pipeline_args["config_path"])
+        logger.warning(pipeline_args)
+        logger.warning(run_args_fe)
+        feature_engineering(**run_args_fe.get("parameters"))
+
 
     if run_generate_instruct_datasets:
         run_args_cd = {}
         pipeline_args["config_path"] = root_dir / "configs" / "generate_instruct_datasets.yaml"
         pipeline_args["run_name"] = f"generate_instruct_datasets_run_{dt.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-        generate_datasets.with_options(**pipeline_args)(**run_args_cd)
+        run_args_cd = parse_yaml_config(pipeline_args["config_path"])
+        generate_datasets(**run_args_cd.get("parameters"))
 
     if run_generate_preference_datasets:
         run_args_cd = {}
         pipeline_args["config_path"] = root_dir / "configs" / "generate_preference_datasets.yaml"
         pipeline_args["run_name"] = f"generate_preference_datasets_run_{dt.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-        generate_datasets.with_options(**pipeline_args)(**run_args_cd)
+        run_args_cd = parse_yaml_config(pipeline_args["config_path"])
+        generate_datasets(**run_args_cd.get("parameters"))
 
     if run_training:
         run_args_cd = {}
         pipeline_args["config_path"] = root_dir / "configs" / "training.yaml"
         pipeline_args["run_name"] = f"training_run_{dt.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-        training.with_options(**pipeline_args)(**run_args_cd)
+        run_args_cd = parse_yaml_config(pipeline_args["config_path"])
+        training(**run_args_cd.get("parameters"))
 
     if run_evaluation:
         run_args_cd = {}
         pipeline_args["config_path"] = root_dir / "configs" / "evaluating.yaml"
         pipeline_args["run_name"] = f"evaluation_run_{dt.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-        evaluating.with_options(**pipeline_args)(**run_args_cd)
+        run_args_cd = parse_yaml_config(pipeline_args["config_path"])
+        evaluating(**run_args_cd.get("parameters"))
 
 
 if __name__ == "__main__":

@@ -1,11 +1,11 @@
-from zenml import pipeline
+from clearml import PipelineDecorator, Task
 
 from .digital_data_etl import digital_data_etl
 from .feature_engineering import feature_engineering
 from .generate_datasets import generate_datasets
 
 
-@pipeline
+@PipelineDecorator.pipeline(name="end_to_end_data", project="CS370")
 def end_to_end_data(
     author_links: list[dict[str, str | list[str]]],
     test_split_size: float = 0.1,
@@ -13,6 +13,8 @@ def end_to_end_data(
     dataset_id: str | None = None,
     mock: bool = False,
 ) -> None:
+    task = Task.init(project_name='CS370', task_name='end_to_end_data')
+
     wait_for_ids = []
     for author_data in author_links:
         last_step_invocation_id = digital_data_etl(

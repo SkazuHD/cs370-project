@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from loguru import logger
 from qdrant_client.http import exceptions
 from typing_extensions import Annotated
-from zenml import step
+from clearml import PipelineDecorator
 
 from llm_engineering.domain.base.nosql import NoSQLBaseDocument
 from llm_engineering.domain.cleaned_documents import (
@@ -14,7 +14,8 @@ from llm_engineering.domain.cleaned_documents import (
 )
 
 
-@step
+@PipelineDecorator.component(name="query_feature_store")
+
 def query_feature_store() -> Annotated[list, "queried_cleaned_documents"]:
     logger.info("Querying feature store.")
 

@@ -1,11 +1,11 @@
 from typing_extensions import Annotated
-from zenml import get_step_context, step
+from clearml import PipelineDecorator
 
 from llm_engineering.application.preprocessing import CleaningDispatcher
 from llm_engineering.domain.cleaned_documents import CleanedDocument
 
 
-@step
+@PipelineDecorator.component(name="clean_documents")
 def clean_documents(
     documents: Annotated[list, "raw_documents"],
 ) -> Annotated[list, "cleaned_documents"]:
@@ -14,8 +14,8 @@ def clean_documents(
         cleaned_document = CleaningDispatcher.dispatch(document)
         cleaned_documents.append(cleaned_document)
 
-    step_context = get_step_context()
-    step_context.add_output_metadata(output_name="cleaned_documents", metadata=_get_metadata(cleaned_documents))
+    #step_context = get_step_context()
+    #step_context.add_output_metadata(output_name="cleaned_documents", metadata=_get_metadata(cleaned_documents))
 
     return cleaned_documents
 

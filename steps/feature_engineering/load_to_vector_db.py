@@ -1,12 +1,12 @@
 from loguru import logger
 from typing_extensions import Annotated
-from zenml import step
+from clearml import PipelineDecorator
 
 from llm_engineering.application import utils
 from llm_engineering.domain.base import VectorBaseDocument
 
 
-@step
+@PipelineDecorator.component(name="load_to_vector_db")
 def load_to_vector_db(
     documents: Annotated[list, "documents"],
 ) -> Annotated[bool, "successful"]:

@@ -1,9 +1,9 @@
-from zenml import pipeline
+from clearml import PipelineDecorator
 
 from steps import training as training_steps
 
 
-@pipeline
+@PipelineDecorator.pipeline(name="TODO", project="CS370")
 def training(
     finetuning_type: str = "sft",
     num_train_epochs: int = 3,

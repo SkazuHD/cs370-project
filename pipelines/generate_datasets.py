@@ -1,10 +1,9 @@
-from zenml import pipeline
-
+from clearml import PipelineDecorator
 from llm_engineering.domain.dataset import DatasetType
 from steps import generate_datasets as cd_steps
 
 
-@pipeline
+@PipelineDecorator.pipeline(name="evaluating", project="CS370")
 def generate_datasets(
     dataset_type: DatasetType = DatasetType.INSTRUCTION,
     test_split_size: float = 0.1,
