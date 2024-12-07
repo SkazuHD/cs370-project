@@ -143,7 +143,7 @@ class LLMInferenceOLLAMA(Inference):
             parameters (dict, optional): Additional parameters for the inference. Defaults to None.
         """
         self.payload = [
-            SystemMessage(content='You are a helpful Assistant that answers questions of the user accurately given its knowledge and the provided context'),
+            SystemMessage(content='You are a helpful Assistant that answers questions of the user accurately given its knowledge and the provided context that was found in the external database'),
             SystemMessage(content=context),
             query,
         ]
